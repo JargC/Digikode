@@ -2,48 +2,69 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.TextField;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 public class Interface extends JFrame implements ActionListener {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String pilote = "com.mysql.jdbc.Driver";
 	private JPanel pan1, pan2;
 	private JLabel titre, details, label_login, label_mdp, invis1, invis2;
 	private JTextField login;
 	private JPasswordField mdp;
 	private JButton submit;
+	private Interface2 interface_index;
 	
-	public void Connect() {
-	try{
-		Class.forName(pilote);
- 
-		Connection connexion = DriverManager.getConnection("jdbc:mysql://localhost/agenda","root","");
- 
-		Statement instruction = connexion.createStatement();
- 
-//		ResultSet resultat = instruction.executeQuery("SELECT * FROM contact");
-//		while(resultat.next()){
-//
-//			
-//			System.out.println("---------------------------");
-//			System.out.println("Login: "+resultat.getString("login"));
-//			System.out.println("Sport: "+resultat.getString("sport"));
-//
-//		}
-	}
-	catch (Exception e){
-		System.out.println("echec pilote : "+e);
-	}
+	public void Connect(String login, String mdp) {
+		try{
+			Class.forName(pilote);
+	 
+			Connection connexion = DriverManager.getConnection("jdbc:mysql://localhost/agenda","root","");
+	 
+			Statement instruction = connexion.createStatement();
+	 
+			ResultSet resultat = instruction.executeQuery("SELECT password FROM contact WHERE login ='"+login+"'");
+			
+			if(resultat.next())
+			{
+				String motDePasse = resultat.getString(1);
+				
+				if(motDePasse.equals(mdp))
+				{
+					JOptionPane.showMessageDialog(null,"Connexion réussie ! ","",JOptionPane.PLAIN_MESSAGE);
+					this.dispose();
+			        interface_index = new Interface2(login);		
+					
+				}
+				else {
+					JOptionPane.showMessageDialog(null,"Mot de passe incorrect ! ","Erreur",1);
+				}
+			}
+			else {
+				JOptionPane.showMessageDialog(null,"Login et/ou mot de passe incorrect(s) ! ","Erreur",1);
+			}
+		
+			connexion.close();
+		}
+		catch (Exception e){
+			System.out.println("echec pilote : "+e);
+		}
 	}
 	
 	public Interface() {
@@ -93,6 +114,7 @@ public class Interface extends JFrame implements ActionListener {
 		pan2.add(mdp);
 		pan2.add(invis2);
 		pan2.add(submit);
+		submit.addActionListener(this);
 		
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setVisible(true);
@@ -101,7 +123,11 @@ public class Interface extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		
+		String login_test = login.getText();
+        String password_test = mdp.getText();
+    	System.out.println(login_test);
+    	System.out.println(password_test);
+		this.Connect(login_test, password_test);
 	}
 
 }
