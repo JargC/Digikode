@@ -4,11 +4,14 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -67,12 +70,13 @@ public class Interface extends JFrame implements ActionListener {
 		}
 	}
 	
-	public Interface() {
+	public Interface() throws IOException {
 		setTitle("Connexion");
 		setSize(400, 500);
 		getContentPane().setLayout(new GridLayout(2, 1));
 		setLocationRelativeTo(this.getParent());
 		setBackground(Color.gray);
+		setIconImage(ImageIO.read(new File("res/icone.png")));
 		this.setResizable(false);
 		 
 		invis1 = new JLabel("");
