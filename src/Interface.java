@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
@@ -20,56 +21,54 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+/**
+ * <b>Classe représentant la fenêtre de connexion de l'application Digikode</b>
+ * 
+ * @authors Jean Clemenceau, Terry Grosso
+ * @version 0.3
+ *
+ */
 public class Interface extends JFrame implements ActionListener {
 	
 	/**
-	 * 
+	 * Serialisation de la classe
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	/**
+	 * Le pilote JDBC pour accèder à la base de données
+	 */
 	private String pilote = "com.mysql.jdbc.Driver";
+	
+	/**
+	 * Les panels utilisés dans la fenêtre de connexion
+	 */
 	private JPanel pan1, pan2;
+	
+	/**
+	 * Les labels utilisés dans la fenêtre de connexion
+	 */
 	private JLabel titre, details, label_login, label_mdp, invis1, invis2;
+	
+	/**
+	 * Le champ de saisie de l'identifiant pour l'utilisateur
+	 */
 	private JTextField login;
+	
+	/**
+	 * Le champ de saisie de mot de passe pour l'utilisateur
+	 */
 	private JPasswordField mdp;
+	
+	/**
+	 * Le bouton pour envoyer la requête de connexion
+	 */
 	private JButton submit;
-	private Interface2 interface_index;
 	
-	public void Connect(String login, String mdp) {
-		try{
-			Class.forName(pilote);
-	 
-			Connection connexion = DriverManager.getConnection("jdbc:mysql://localhost/agenda","root","");
-	 
-			Statement instruction = connexion.createStatement();
-	 
-			ResultSet resultat = instruction.executeQuery("SELECT password FROM contact WHERE login ='"+login+"'");
-			
-			if(resultat.next())
-			{
-				String motDePasse = resultat.getString(1);
-				
-				if(motDePasse.equals(mdp))
-				{
-					JOptionPane.showMessageDialog(null,"Connexion réussie ! ","",JOptionPane.PLAIN_MESSAGE);
-					this.dispose();
-			        interface_index = new Interface2(login);		
-					
-				}
-				else {
-					JOptionPane.showMessageDialog(null,"Mot de passe incorrect ! ","Erreur",1);
-				}
-			}
-			else {
-				JOptionPane.showMessageDialog(null,"Login et/ou mot de passe incorrect(s) ! ","Erreur",1);
-			}
-		
-			connexion.close();
-		}
-		catch (Exception e){
-			System.out.println("echec pilote : "+e);
-		}
-	}
-	
+	/**
+	 * Constructeur de la fenêtre
+	 * @throws IOException
+	 */
 	public Interface() throws IOException {
 		setTitle("Connexion");
 		setSize(400, 500);
@@ -124,14 +123,92 @@ public class Interface extends JFrame implements ActionListener {
 		this.setVisible(true);
 	}
 
-	@Override
+	/**
+	 * Retourne le mot de passe correspondant à l'identifiant correspondant
+	 * @param login
+	 * @return un mot de passe sous la forme d'un tableau de caractères
+	 * 
+	 */
+	private char[] convertPassword(String login) {
+		char[] password_empty = new char[0];
+		try{
+			Class.forName(pilote);
+	 
+			Connection connexion = DriverManager.getConnection("jdbc:mysql://localhost/agenda","root","");
+	 
+			Statement instruction = connexion.createStatement();
+	 
+			ResultSet resultat = instruction.executeQuery("SELECT password FROM contact WHERE login ='"+login+"'");
+				
+			if(resultat.next())
+			{
+				String motDePasse = resultat.getString(1);
+				char[] password = new char[motDePasse.length()];
+				for (int i = 0; i < motDePasse.length(); i++) {
+					password[i] = motDePasse.charAt(i);
+				}
+				return password;
+				
+			}
+			else {
+				JOptionPane.showMessageDialog(null,"Login incorrect ! ","Erreur",1);
+			}		
+			connexion.close();
+		}
+		catch (Exception e){
+			System.out.println("echec pilote : "+e);
+		}
+		
+		return password_empty;
+	}
+	
+	/**
+	 * 
+	 * @param input		l'identifiant entré par l'utilisateur
+	 * @param test		le mot de passe entré par l'utilisateur
+	 * @return boolean, true si le mot de passe rentré est correct, false dans le cas contraire
+	 */
+	private static boolean isPasswordCorrect(char[] input, char[] test) {
+	    boolean isCorrect = true;
+	    
+	    if (input.length != test.length) {
+	        isCorrect = false;
+	    } else {
+	        isCorrect = Arrays.equals (input, test);
+	    }
+
+	    Arrays.fill(test,'0');
+
+	    return isCorrect;
+	}
+	
+	/**
+	 * Méthode gérant l'événement du click sur le bouton de connexion
+	 */
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
+		
 		String login_test = login.getText();
-        String password_test = mdp.getText();
-    	System.out.println(login_test);
-    	System.out.println(password_test);
-		this.Connect(login_test, password_test);
+        char[] password_test = mdp.getPassword();
+        char[] actual_password = convertPassword(login_test);
+        if(isPasswordCorrect(password_test, actual_password))
+        {
+        	this.Connect(login_test);       
+        }
+        else
+        {
+        	JOptionPane.showMessageDialog(null,"Mot de passe éronné ! ","",JOptionPane.PLAIN_MESSAGE);
+        }
+		
+	}
+	
+	/**
+	 * Envoie l'utilisateur vers la fenêtre suivante si les informations rentrées sont bonnes
+	 * @param login
+	 */
+	private void Connect(String login) {
+		JOptionPane.showMessageDialog(null,"Connexion réussie ! ","",JOptionPane.PLAIN_MESSAGE);
+		this.dispose();
+		new Interface2(login);		
 	}
 
 }
