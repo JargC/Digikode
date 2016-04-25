@@ -21,6 +21,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+
 /**
  * <b>Classe représentant la fenêtre de connexion de l'application Digikode</b>
  * 
@@ -28,7 +29,7 @@ import javax.swing.JTextField;
  * @version 0.3
  *
  */
-public class Interface extends JFrame implements ActionListener {
+public class FenetreConnexion extends JFrame implements ActionListener {
 	
 	/**
 	 * Serialisation de la classe
@@ -65,11 +66,20 @@ public class Interface extends JFrame implements ActionListener {
 	 */
 	private JButton submit;
 	
+	////////////////////////// MAIN ///////////////////////////////////
+	
+	public static void main(String[] args) throws IOException {
+		JFrame digikode = new FenetreConnexion();
+		digikode.setVisible(true);
+	}
+	
 	/**
 	 * Constructeur de la fenêtre
 	 * @throws IOException
 	 */
-	public Interface() throws IOException {
+	
+	public FenetreConnexion() throws IOException {
+		
 		setTitle("Connexion");
 		setSize(400, 500);
 		getContentPane().setLayout(new GridLayout(2, 1));
@@ -80,6 +90,7 @@ public class Interface extends JFrame implements ActionListener {
 		 
 		invis1 = new JLabel("");
 		invis1.setPreferredSize(new Dimension(200, 60));
+		
 		invis2 = new JLabel("");
 		invis2.setPreferredSize(new Dimension(200, 30));
 		
@@ -93,18 +104,24 @@ public class Interface extends JFrame implements ActionListener {
 		
 		label_login = new JLabel("Identifiant : ");
 		label_login.setPreferredSize(new Dimension(100, 50));
+		
 		label_mdp = new JLabel("Mot de passe : ");
 		label_mdp.setPreferredSize(new Dimension(100, 50));
+		
 		login = new JTextField(16);
 		login.setPreferredSize(new Dimension(100, 30));
+		
 		mdp = new JPasswordField(16);
 		mdp.setPreferredSize(new Dimension(100, 30));
+		
 		submit = new JButton("Se connecter");
 		submit.setPreferredSize(new Dimension(200, 40));
 		
 		pan1 = new JPanel();
-		pan2 = new JPanel();
 		pan1.setBackground(Color.LIGHT_GRAY);
+		
+		pan2 = new JPanel();
+		
 		
 		this.add(pan1);
 		this.add(pan2);
@@ -120,11 +137,10 @@ public class Interface extends JFrame implements ActionListener {
 		submit.addActionListener(this);
 		
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		this.setVisible(true);
 	}
 
 	/**
-	 * Retourne le mot de passe correspondant à l'identifiant correspondant
+	 * Retourne le mot de passe associé à l'identifiant correspondant
 	 * @param login
 	 * @return un mot de passe sous la forme d'un tableau de caractères
 	 * 
@@ -192,7 +208,11 @@ public class Interface extends JFrame implements ActionListener {
         char[] actual_password = convertPassword(login_test);
         if(isPasswordCorrect(password_test, actual_password))
         {
-        	this.Connect(login_test);       
+        	try {
+				this.Connect(login_test);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}       
         }
         else
         {
@@ -202,13 +222,14 @@ public class Interface extends JFrame implements ActionListener {
 	}
 	
 	/**
-	 * Envoie l'utilisateur vers la fenêtre suivante si les informations rentrées sont bonnes
+	 * Envoie l'utilisateur vers la fenêtre suivante
 	 * @param login
+	 * @throws IOException 
 	 */
-	private void Connect(String login) {
+	private void Connect(String login) throws IOException {
 		JOptionPane.showMessageDialog(null,"Connexion réussie ! ","",JOptionPane.PLAIN_MESSAGE);
 		this.dispose();
-		new Interface2(login);		
+		new FenetreApplication(login);		
 	}
 
 }
