@@ -8,6 +8,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
@@ -19,6 +20,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+
+/**
+ * <b>Classe représentant la fenêtre principale de l'application Digikode</b>
+ * @author Jean Clemenceau
+ * @version 0.8
+ */
 public class FenetreApplication extends JFrame implements ActionListener{
 	
 	/**
@@ -52,14 +59,42 @@ public class FenetreApplication extends JFrame implements ActionListener{
 	
 	//////////////////////////////////
     
+    /**
+     * Constructeur de la fenêtre
+     * @param login
+     * @throws IOException
+     */
+    public FenetreApplication(String login) throws IOException {
+    	   
+    this.setTitle(login);
+    this.setSize(700,500);
+    setIconImage(ImageIO.read(new File("res/icone.png")));
+    this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+    this.setLocationRelativeTo(null);
+    
+    pan.setLayout(new BorderLayout());
+    
+    JLabel label = new JLabel("Digikode - Générateur de digicodes pour la M2L");
+    label.setHorizontalAlignment(JLabel.CENTER);
+    label.setVerticalAlignment(JLabel.CENTER);
+    
+    pan.add(label, BorderLayout.NORTH); 
+                     
+    setContentPane(pan);
+    
+    createReservationsTable(login);
+        
+    this.setVisible(true);   
+       
+ }
     
     /**
      * Méthode permettant de récupérer la date du jour
-     * @return la date du jour sous le meme format que celles de la BDD
+     * @return la date du jour sous le meme format que celui de la base de données
      */
     private String getDateJour(){
     	
-     	String format = "dd/MM/yyyy";  // Le format souhaité pour la date
+     	String format = "yyyy-MM-dd";  // Le format souhaité pour la date
 
      	java.text.SimpleDateFormat formater = new java.text.SimpleDateFormat(format); // L'objet de formatage
      	java.util.Date date = new java.util.Date(); // On récupère la date du jour
@@ -67,6 +102,40 @@ public class FenetreApplication extends JFrame implements ActionListener{
      	String dateJour = formater.format(date); // On la formate
      	
      	return dateJour;
+     	
+    }
+    
+    
+    /**
+     * Méthode créant un digicode aléatoire, le mettant à jour dans la base de données ainsi que dans le tableau de l'application
+     * @param id
+     * @param modelRow
+     */
+    public void createDigicode(String id, int modelRow) {
+    	
+    	String possibilites = "AB0123456789";		// les symboles utilisables sur  l'interface de digicode
+    	String digicode = "";
+    	Random r = new Random();					// objet pour générer la part d'aleatoire dans la construction de nos digicodes
+    	
+    	for (int i = 0; i < 5; i++) {				// i correspond à la longueur du digicode souhaitée
+	    		int number = r.nextInt(11);			// on prend un entier compris entre 0 et 11
+	    		digicode += possibilites.charAt(number);
+		}    	
+    	
+    	String req = "Update reservation set digicode ='" + digicode + "' WHERE id ='" + id + "'";   
+    	
+    	
+     	try{
+     		Class.forName(pilote).newInstance();
+     		Connection con = DriverManager.getConnection("jdbc:mysql://localhost/agenda","root","");
+     		Statement st = con.createStatement();
+     		st.executeUpdate(req);
+     		table.getModel().setValueAt(digicode, modelRow, 6);			// on met à jour la valeur dans le tableau pour un affichage immédiat
+     	}
+     	
+ 		catch(Exception e1){
+ 			System.out.println(e1);
+ 		}
      	
     }
     
@@ -81,7 +150,7 @@ public class FenetreApplication extends JFrame implements ActionListener{
     	/////////////////////// Récupération des données ///////////////////////////////////
      	 	
      	String req = "SELECT * FROM reservation WHERE login = '"+login+"' AND date >= '"+getDateJour()+"'"; // On ne récupère que les reservations à venir
-     	     	
+     		
     	ResultSet res;
      	
      	try{
@@ -128,11 +197,11 @@ public class FenetreApplication extends JFrame implements ActionListener{
 	            Action generer = new AbstractAction() {
 
 	                @Override
-	                public void actionPerformed(ActionEvent e) {
+	                public void actionPerformed(ActionEvent e) {							// action se réalise lors d'un click sur un bouton "générer"
 	                	table = (JTable) e.getSource();
-	                	int modelRow = Integer.valueOf(e.getActionCommand());
-	                	String id = table.getModel().getValueAt(modelRow, 0).toString();
-	                	System.out.println(id);
+	                	int modelRow = Integer.valueOf(e.getActionCommand());				// on recupere la ligne sujette
+	                	String id = table.getModel().getValueAt(modelRow, 0).toString();	// on recupere l'id correspondant au futur traitement
+	                	createDigicode(id, modelRow);										// on genere le digicode
 	                }
 	            };
 	            
@@ -147,43 +216,11 @@ public class FenetreApplication extends JFrame implements ActionListener{
     		}
      	
      		catch(Exception e1){
-     			System.out.println("Classe non trouvée " + pilote);
+     			System.out.println(e1);
      		}
     	
     }
     
-    
-    /**
-     * Constructeur de la fenêtre
-     * @param login
-     * @throws IOException
-     */
-    public FenetreApplication(String login) throws IOException {
-    	   
-    this.setTitle(login);
-    this.setSize(700,500);
-    setIconImage(ImageIO.read(new File("res/icone.png")));
-    this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-    this.setLocationRelativeTo(null);
-    
-    pan.setLayout(new BorderLayout());
-    
-    JLabel label = new JLabel("Digikode - Générateur de digicodes pour la M2L");
-    label.setHorizontalAlignment(JLabel.CENTER);
-    label.setVerticalAlignment(JLabel.CENTER);
-    
-    pan.add(label, BorderLayout.NORTH); 
-                     
-    setContentPane(pan);
-    
-    createReservationsTable(login);
-        
-    this.setVisible(true);    
-    
-    
- }
-
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		

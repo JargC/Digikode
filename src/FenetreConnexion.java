@@ -25,8 +25,8 @@ import javax.swing.JTextField;
 /**
  * <b>Classe représentant la fenêtre de connexion de l'application Digikode</b>
  * 
- * @authors Jean Clemenceau, Terry Grosso
- * @version 0.3
+ * @authors Jean Clemenceau
+ * @version 0.8
  *
  */
 public class FenetreConnexion extends JFrame implements ActionListener {
