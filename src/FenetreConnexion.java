@@ -4,6 +4,8 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
@@ -113,6 +115,26 @@ public class FenetreConnexion extends JFrame implements ActionListener {
 		
 		mdp = new JPasswordField(16);
 		mdp.setPreferredSize(new Dimension(100, 30));
+		
+		/**
+		 * Appuyer sur la touche Entrée dans la case mdp appelle le bouton "Se Connecter"
+		 */
+		mdp.addKeyListener(
+                new KeyListener(){
+ 
+                   /*la méthode keyPressed est appelée lorsque l'on presse une touche*/   
+                   public void keyPressed(KeyEvent e){
+                     if (e.getKeyCode()== KeyEvent.VK_ENTER) {
+                    	 submit.doClick(0);
+                     }
+                   }
+ 
+                   /*les deux méthodes suivantes doivent être également écrites pour pouvoir réaliser l'interface KeyListener*/               
+                   public void keyReleased(KeyEvent e){}
+                   public void keyTyped(KeyEvent e){}
+ 
+               }  
+);
 		
 		submit = new JButton("Se connecter");
 		submit.setPreferredSize(new Dimension(200, 40));

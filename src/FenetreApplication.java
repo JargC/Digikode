@@ -15,9 +15,15 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.event.MenuEvent;
+import javax.swing.event.MenuListener;
 import javax.swing.table.DefaultTableModel;
 
 
@@ -27,6 +33,19 @@ import javax.swing.table.DefaultTableModel;
  * @version 0.8
  */
 public class FenetreApplication extends JFrame implements ActionListener{
+	
+	/**
+	 * Menu Fenêtre Application
+	 */
+	  
+	  private JMenuBar menuBar = new JMenuBar();
+	  private JMenu menu = new JMenu("Menu");
+	  
+
+	  private JMenuItem item1 = new JMenuItem("Mon compte");
+	  private JMenuItem item2 = new JMenuItem("Aide");
+	  private JMenuItem item3 = new JMenuItem("A propos");
+	  
 	
 	/**
 	 * Serialisation de la classe
@@ -65,7 +84,58 @@ public class FenetreApplication extends JFrame implements ActionListener{
      * @throws IOException
      */
     public FenetreApplication(String login) throws IOException {
-    	   
+    
+    	/**
+    	 * Mise en place d'un Menu
+    	 */
+    	//On initialise nos menus      
+        this.menu.add(item1);
+        this.menu.add(item2);
+        this.menu.add(item3);
+
+        item1.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent arg0) {
+            	
+            }        
+          });
+        
+        item2.addActionListener(new ActionListener(){
+          public void actionPerformed(ActionEvent arg1) {
+            
+        	  Object[] message = {
+          			"Vous êtes sur la fenêtre contenant la liste de vos réservations en cours de validité.",
+          			"Veuillez cliquer sur le bouton Générer pour modifier aléatoirement le digicode correspondant. \n\n",
+          			"Si vous souhaitez changer de mot de passe, veuillez contacter l'administrateur."
+          		};
+          	JOptionPane.showMessageDialog(null, message,"Aide",JOptionPane.PLAIN_MESSAGE);
+        	  
+          }        
+        });
+        
+        item3.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent arg1) {
+              
+            	Object[] message = {
+            			"Digikode v1.0",
+            			"Application créée par Cheekyto \n\n",
+            			"Jean CLEMENCEAU & Terry GROSSO",
+            			"BTS SIO SLAM - ECE TECH"
+            		};
+            	JOptionPane.showMessageDialog(null, message,"À propos",JOptionPane.PLAIN_MESSAGE);
+          	  
+            }        
+          });
+          
+        
+        
+        
+        
+
+        //L'ordre d'ajout va déterminer l'ordre d'apparition dans le menu de gauche à droite
+        //Le premier ajouté sera tout à gauche de la barre de menu et inversement pour le dernier
+        this.menuBar.add(menu);
+        this.setJMenuBar(menuBar);
+        
     this.setTitle(login);
     this.setSize(700,500);
     setIconImage(ImageIO.read(new File("res/icone.png")));
