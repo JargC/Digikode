@@ -32,56 +32,56 @@ import javax.swing.JTextField;
  *
  */
 public class FenetreConnexion extends JFrame implements ActionListener {
-	
+
 	/**
 	 * Serialisation de la classe
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	/**
 	 * Le pilote JDBC pour accèder à la base de données
 	 */
 	private String pilote = "com.mysql.jdbc.Driver";
-	
+
 	/**
 	 * Les panels utilisés dans la fenêtre de connexion
 	 */
 	private JPanel pan1, pan2;
-	
+
 	/**
 	 * Les labels utilisés dans la fenêtre de connexion
 	 */
 	private JLabel titre, details, label_login, label_mdp, invis1, invis2;
-	
+
 	/**
 	 * Le champ de saisie de l'identifiant pour l'utilisateur
 	 */
 	private JTextField login;
-	
+
 	/**
 	 * Le champ de saisie de mot de passe pour l'utilisateur
 	 */
 	private JPasswordField mdp;
-	
+
 	/**
 	 * Le bouton pour envoyer la requête de connexion
 	 */
 	private JButton submit;
-	
+
 	////////////////////////// MAIN ///////////////////////////////////
-	
+
 	public static void main(String[] args) throws IOException {
 		JFrame digikode = new FenetreConnexion();
 		digikode.setVisible(true);
 	}
-	
+
 	/**
 	 * Constructeur de la fenêtre
 	 * @throws IOException
 	 */
-	
+
 	public FenetreConnexion() throws IOException {
-		
+
 		setTitle("Connexion");
 		setSize(400, 500);
 		getContentPane().setLayout(new GridLayout(2, 1));
@@ -89,62 +89,62 @@ public class FenetreConnexion extends JFrame implements ActionListener {
 		setBackground(Color.gray);
 		setIconImage(ImageIO.read(new File("res/icone.png")));
 		this.setResizable(false);
-		 
+
 		invis1 = new JLabel("");
 		invis1.setPreferredSize(new Dimension(200, 60));
-		
+
 		invis2 = new JLabel("");
 		invis2.setPreferredSize(new Dimension(200, 30));
-		
+
 		titre = new JLabel("Digikode");
 		titre.setPreferredSize(new Dimension(200, 50));
 		titre.setFont(new Font("Verdana", 1, 40));
-		
+
 		details = new JLabel("  (Application M2L)");
 		details.setPreferredSize(new Dimension(200, 50));
 		details.setFont(new Font("Verdana", 2, 19));
-		
+
 		label_login = new JLabel("Identifiant : ");
 		label_login.setPreferredSize(new Dimension(100, 50));
-		
+
 		label_mdp = new JLabel("Mot de passe : ");
 		label_mdp.setPreferredSize(new Dimension(100, 50));
-		
+
 		login = new JTextField(16);
 		login.setPreferredSize(new Dimension(100, 30));
-		
+
 		mdp = new JPasswordField(16);
 		mdp.setPreferredSize(new Dimension(100, 30));
-		
+
 		/**
 		 * Appuyer sur la touche Entrée dans la case mdp appelle le bouton "Se Connecter"
 		 */
 		mdp.addKeyListener(
-                new KeyListener(){
- 
-                   /*la méthode keyPressed est appelée lorsque l'on presse une touche*/   
-                   public void keyPressed(KeyEvent e){
-                     if (e.getKeyCode()== KeyEvent.VK_ENTER) {
-                    	 submit.doClick(0);
-                     }
-                   }
- 
-                   /*les deux méthodes suivantes doivent être également écrites pour pouvoir réaliser l'interface KeyListener*/               
-                   public void keyReleased(KeyEvent e){}
-                   public void keyTyped(KeyEvent e){}
- 
-               }  
-);
-		
+				new KeyListener(){
+
+					/*la méthode keyPressed est appelée lorsque l'on presse une touche*/   
+					public void keyPressed(KeyEvent e){
+						if (e.getKeyCode()== KeyEvent.VK_ENTER) {
+							submit.doClick(0);
+						}
+					}
+
+					/*les deux méthodes suivantes doivent être également écrites pour pouvoir réaliser l'interface KeyListener*/               
+					public void keyReleased(KeyEvent e){}
+					public void keyTyped(KeyEvent e){}
+
+				}  
+				);
+
 		submit = new JButton("Se connecter");
 		submit.setPreferredSize(new Dimension(200, 40));
-		
+
 		pan1 = new JPanel();
 		pan1.setBackground(Color.LIGHT_GRAY);
-		
+
 		pan2 = new JPanel();
-		
-		
+
+
 		this.add(pan1);
 		this.add(pan2);
 		pan1.add(invis1);
@@ -157,7 +157,7 @@ public class FenetreConnexion extends JFrame implements ActionListener {
 		pan2.add(invis2);
 		pan2.add(submit);
 		submit.addActionListener(this);
-		
+
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 
@@ -171,13 +171,13 @@ public class FenetreConnexion extends JFrame implements ActionListener {
 		char[] password_empty = new char[0];
 		try{
 			Class.forName(pilote);
-	 
+
 			Connection connexion = DriverManager.getConnection("jdbc:mysql://localhost/agenda","root","");
-	 
+
 			Statement instruction = connexion.createStatement();
-	 
+
 			ResultSet resultat = instruction.executeQuery("SELECT password FROM contact WHERE login ='"+login+"'");
-				
+
 			if(resultat.next())
 			{
 				String motDePasse = resultat.getString(1);
@@ -186,7 +186,7 @@ public class FenetreConnexion extends JFrame implements ActionListener {
 					password[i] = motDePasse.charAt(i);
 				}
 				return password;
-				
+
 			}
 			else {
 				JOptionPane.showMessageDialog(null,"Login incorrect ! ","Erreur",1);
@@ -196,10 +196,10 @@ public class FenetreConnexion extends JFrame implements ActionListener {
 		catch (Exception e){
 			System.out.println("echec pilote : "+e);
 		}
-		
+
 		return password_empty;
 	}
-	
+
 	/**
 	 * 
 	 * @param input		l'identifiant entré par l'utilisateur
@@ -207,42 +207,42 @@ public class FenetreConnexion extends JFrame implements ActionListener {
 	 * @return boolean, true si le mot de passe rentré est correct, false dans le cas contraire
 	 */
 	private static boolean isPasswordCorrect(char[] input, char[] test) {
-	    boolean isCorrect = true;
-	    
-	    if (input.length != test.length) {
-	        isCorrect = false;
-	    } else {
-	        isCorrect = Arrays.equals (input, test);
-	    }
+		boolean isCorrect = true;
 
-	    Arrays.fill(test,'0');
+		if (input.length != test.length) {
+			isCorrect = false;
+		} else {
+			isCorrect = Arrays.equals (input, test);
+		}
 
-	    return isCorrect;
+		Arrays.fill(test,'0');
+
+		return isCorrect;
 	}
-	
+
 	/**
 	 * Méthode gérant l'événement du click sur le bouton de connexion
 	 */
 	public void actionPerformed(ActionEvent e) {
-		
+
 		String login_test = login.getText();
-        char[] password_test = mdp.getPassword();
-        char[] actual_password = convertPassword(login_test);
-        if(isPasswordCorrect(password_test, actual_password))
-        {
-        	try {
+		char[] password_test = mdp.getPassword();
+		char[] actual_password = convertPassword(login_test);
+		if(isPasswordCorrect(password_test, actual_password))
+		{
+			try {
 				this.Connect(login_test);
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}       
-        }
-        else
-        {
-        	JOptionPane.showMessageDialog(null,"Mot de passe éronné ! ","",JOptionPane.PLAIN_MESSAGE);
-        }
-		
+		}
+		else
+		{
+			JOptionPane.showMessageDialog(null,"Mot de passe éronné ! ","",JOptionPane.PLAIN_MESSAGE);
+		}
+
 	}
-	
+
 	/**
 	 * Envoie l'utilisateur vers la fenêtre suivante
 	 * @param login
