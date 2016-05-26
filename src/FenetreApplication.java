@@ -28,8 +28,8 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  * <b>Classe représentant la fenêtre principale de l'application Digikode</b>
- * @author Jean Clemenceau
- * @version 0.8
+ * @authors Jean Clemenceau, Terry Grosso
+ * @version 1.0
  */
 public class FenetreApplication extends JFrame implements ActionListener{
 	
