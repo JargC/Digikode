@@ -61,6 +61,14 @@ public class FenetreApplication extends JFrame implements ActionListener{
 	 * Le pilote JDBC pour accèder à la base de données
 	 */
 	private String pilote = "com.mysql.jdbc.Driver";
+	
+	/**
+	 * Les logs de connexion à la bdd
+	 */
+
+	private final String server = "jdbc:mysql://localhost/agenda";
+	private final String user = "root";
+	private final String pswd = "";
 
 	private JPanel pan = new JPanel(new BorderLayout());
 
@@ -198,7 +206,7 @@ public class FenetreApplication extends JFrame implements ActionListener{
 
 		try{
 			Class.forName(pilote).newInstance();
-			Connection con = DriverManager.getConnection("jdbc:mysql://localhost/agenda","root","");
+			Connection con = DriverManager.getConnection(server,user,pswd);
 			Statement st = con.createStatement();
 			res = st.executeQuery(req);
 			
@@ -250,7 +258,7 @@ public class FenetreApplication extends JFrame implements ActionListener{
 
 		try{
 			Class.forName(pilote).newInstance();
-			Connection con = DriverManager.getConnection("jdbc:mysql://localhost/agenda","root","");
+			Connection con = DriverManager.getConnection(server,user,pswd);
 			Statement st = con.createStatement();
 			st.executeUpdate(req);
 			table.getModel().setValueAt(digicode, modelRow, 6);			// on met à jour la valeur dans le tableau pour un affichage immédiat
@@ -279,7 +287,7 @@ public class FenetreApplication extends JFrame implements ActionListener{
 		try{
 
 			Class.forName(pilote).newInstance();
-			Connection con = DriverManager.getConnection("jdbc:mysql://localhost/agenda","root","");
+			Connection con = DriverManager.getConnection(server,user,pswd);
 			Statement st = con.createStatement();
 			res = st.executeQuery(req); 
 

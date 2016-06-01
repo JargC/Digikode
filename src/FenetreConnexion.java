@@ -42,7 +42,22 @@ public class FenetreConnexion extends JFrame implements ActionListener {
 	 * Le pilote JDBC pour accèder à la base de données
 	 */
 	private String pilote = "com.mysql.jdbc.Driver";
-
+	
+	/**
+	 * L'adresse du serveur pour la connexion à la base de données
+	 */	
+	private final String server = "jdbc:mysql://localhost/agenda";
+	
+	/**
+	 * L'identifiant utilisé pour se connecter à la base de données
+	 */
+	private final String user = "root";
+	
+	/**
+	 * Le mot de passe correspondant à l'identifiant utilisé pour se connecter à la base de données
+	 */
+	private final String pswd = "";
+	
 	/**
 	 * Les panels utilisés dans la fenêtre de connexion
 	 */
@@ -172,7 +187,7 @@ public class FenetreConnexion extends JFrame implements ActionListener {
 		try{
 			Class.forName(pilote);
 
-			Connection connexion = DriverManager.getConnection("jdbc:mysql://localhost/agenda","root","");
+			Connection connexion = DriverManager.getConnection(server,user,pswd);
 
 			Statement instruction = connexion.createStatement();
 
